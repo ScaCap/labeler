@@ -13,6 +13,7 @@ type ClientType = ReturnType<typeof github.getOctokit>;
 
 export async function run() {
   try {
+    core.info(JSON.stringify(github.context.payload.pull_request));
     const token = core.getInput("repo-token", { required: true });
     const configPath = core.getInput("configuration-path", { required: true });
     const syncLabels = !!core.getInput("sync-labels", { required: false });
@@ -257,4 +258,17 @@ async function removeLabels(
       })
     )
   );
+}
+
+async function updateTitleAddLabel(
+  client: ClientType,
+  prNumber: number,
+  labels: string[]
+) {
+  await client.rest.issues.removeLabel({
+    owner: github.context.repo.owner,
+    repo: github.context.repo.repo,
+    issue_number: prNumber,
+    name: label,
+  })
 }
