@@ -235,7 +235,7 @@ function addLabelToTitle(client, prNumber, labels, title) {
             owner: github.context.repo.owner,
             repo: github.context.repo.repo,
             pull_number: prNumber,
-            title: JSON.stringify(labels)
+            title: labels.join(' | ')
         });
     });
 }
