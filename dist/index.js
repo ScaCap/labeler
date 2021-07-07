@@ -43,6 +43,7 @@ const minimatch_1 = __nccwpck_require__(3973);
 function run() {
     return __awaiter(this, void 0, void 0, function* () {
         try {
+            core.info(JSON.stringify(github.context.payload.pull_request));
             const token = core.getInput("repo-token", { required: true });
             const configPath = core.getInput("configuration-path", { required: true });
             const syncLabels = !!core.getInput("sync-labels", { required: false });
