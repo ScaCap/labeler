@@ -13,6 +13,7 @@ type ClientType = ReturnType<typeof github.getOctokit>;
 
 export async function run() {
   try {
+    core.info(JSON.stringify(github.context.payload.pull_request));
     const token = core.getInput("repo-token", { required: true });
     const configPath = core.getInput("configuration-path", { required: true });
     const syncLabels = !!core.getInput("sync-labels", { required: false });
