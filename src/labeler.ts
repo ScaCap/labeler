@@ -254,8 +254,8 @@ async function updateTitle(
   title: string
 ) {
   const updated = title.endsWith(']') 
-    ? title.slice(0, title.lastIndexOf('[')) + '[' + labels.join(' | ') + ']'
-    : title + '[' + labels.join(' | ') + ']';
+    ? title.slice(0, title.lastIndexOf('[')) + ' [' + labels.join(' | ') + ']'
+    : title + ' [' + labels.join(' | ') + ']';
   await client.rest.pulls.update({
     owner: github.context.repo.owner,
     repo: github.context.repo.repo,

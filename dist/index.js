@@ -234,8 +234,8 @@ function addLabels(client, prNumber, labels) {
 function updateTitle(client, prNumber, labels, title) {
     return __awaiter(this, void 0, void 0, function* () {
         const updated = title.endsWith(']')
-            ? title.slice(0, title.lastIndexOf('[')) + '[' + labels.join(' | ') + ']'
-            : title + '[' + labels.join(' | ') + ']';
+            ? title.slice(0, title.lastIndexOf('[')) + ' [' + labels.join(' | ') + ']'
+            : title + ' [' + labels.join(' | ') + ']';
         yield client.rest.pulls.update({
             owner: github.context.repo.owner,
             repo: github.context.repo.repo,
