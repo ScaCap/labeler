@@ -253,7 +253,9 @@ async function updateTitle(
   labels: string[],
   title: string
 ) {
-  const updated = title.slice(0, title.lastIndexOf('[')) + '[' + labels.join(' | ') + ']';
+  const updated = title.endsWith(']') 
+    ? title.slice(0, title.lastIndexOf('[')) + '[' + labels.join(' | ') + ']'
+    : title + '[' + labels.join(' | ') + ']';
   await client.rest.pulls.update({
     owner: github.context.repo.owner,
     repo: github.context.repo.repo,
