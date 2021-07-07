@@ -52,11 +52,14 @@ export async function run() {
 
     if (labels.length > 0) {
       await addLabels(client, prNumber, labels);
-      await addLabelToTitle(client, prNumber, labels, title);
     }
 
     if (syncLabels && labelsToRemove.length) {
       await removeLabels(client, prNumber, labelsToRemove);
+    }
+
+    if (labels.length > 0 || (syncLabels && labelsToRemove.length)) {
+      await updateTitle(client, prNumber, labels, title);
     }
   } catch (error) {
     core.error(error);
@@ -244,17 +247,18 @@ async function addLabels(
   });
 }
 
-async function addLabelToTitle(
+async function updateTitle(
   client: ClientType,
   prNumber: number,
   labels: string[],
   title: string
 ) {
+  const updated = title.slice(0, title.lastIndexOf('[')) + '[' + labels.join(' | ') + ']';
   await client.rest.pulls.update({
     owner: github.context.repo.owner,
     repo: github.context.repo.repo,
     pull_number: prNumber,
-    title: labels.join(' | ')
+    title: updated
   });
 }
 

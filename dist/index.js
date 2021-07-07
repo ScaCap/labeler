@@ -75,10 +75,12 @@ function run() {
             }
             if (labels.length > 0) {
                 yield addLabels(client, prNumber, labels);
-                yield addLabelToTitle(client, prNumber, labels, title);
             }
             if (syncLabels && labelsToRemove.length) {
                 yield removeLabels(client, prNumber, labelsToRemove);
+            }
+            if (labels.length > 0 || (syncLabels && labelsToRemove.length)) {
+                yield updateTitle(client, prNumber, labels, title);
             }
         }
         catch (error) {
@@ -229,13 +231,14 @@ function addLabels(client, prNumber, labels) {
         });
     });
 }
-function addLabelToTitle(client, prNumber, labels, title) {
+function updateTitle(client, prNumber, labels, title) {
     return __awaiter(this, void 0, void 0, function* () {
+        const updated = title.slice(0, title.lastIndexOf('[')) + '[' + labels.join(' | ') + ']';
         yield client.rest.pulls.update({
             owner: github.context.repo.owner,
             repo: github.context.repo.repo,
             pull_number: prNumber,
-            title: labels.join(' | ')
+            title: updated
         });
     });
 }
