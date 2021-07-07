@@ -41,9 +41,10 @@ const github = __importStar(__nccwpck_require__(5438));
 const yaml = __importStar(__nccwpck_require__(1917));
 const minimatch_1 = __nccwpck_require__(3973);
 function run() {
+    var _a;
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            core.info(JSON.stringify(github.context.payload.pull_request));
+            const title = (_a = github.context.payload.pull_request) === null || _a === void 0 ? void 0 : _a.title;
             const token = core.getInput("repo-token", { required: true });
             const configPath = core.getInput("configuration-path", { required: true });
             const syncLabels = !!core.getInput("sync-labels", { required: false });
@@ -74,6 +75,7 @@ function run() {
             }
             if (labels.length > 0) {
                 yield addLabels(client, prNumber, labels);
+                yield addLabelToTitle(client, prNumber, labels, title);
             }
             if (syncLabels && labelsToRemove.length) {
                 yield removeLabels(client, prNumber, labelsToRemove);
@@ -224,6 +226,16 @@ function addLabels(client, prNumber, labels) {
             repo: github.context.repo.repo,
             issue_number: prNumber,
             labels: labels,
+        });
+    });
+}
+function addLabelToTitle(client, prNumber, labels, title) {
+    return __awaiter(this, void 0, void 0, function* () {
+        yield client.rest.pulls.update({
+            owner: github.context.repo.owner,
+            repo: github.context.repo.repo,
+            pull_number: prNumber,
+            title: JSON.stringify(labels)
         });
     });
 }
