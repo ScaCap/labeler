@@ -253,14 +253,24 @@ async function updateTitle(
   labels: string[],
   title: string
 ) {
-  const updated = title.endsWith(']') 
-    ? title.slice(0, title.lastIndexOf('[')) + ' [' + labels.join(' | ') + ']'
-    : title + ' [' + labels.join(' | ') + ']';
+  let updatedTitle = title;
+  if (labels.length > 0) {
+    if (title.endsWith(']')){
+      updatedTitle = title.slice(0, title.lastIndexOf(' [')) + ' [' + labels.join(' | ') + ']';
+    } else {
+      updatedTitle = title + ' [' + labels.join(' | ') + ']';
+    }
+  }
+  
+  if (labels.length === 0 && title.endsWith(']')) {
+    updatedTitle = title.slice(0, title.lastIndexOf(' ['));
+  }
+
   await client.rest.pulls.update({
     owner: github.context.repo.owner,
     repo: github.context.repo.repo,
     pull_number: prNumber,
-    title: updated
+    title: updatedTitle
   });
 }
 
