@@ -234,7 +234,7 @@ function addLabels(client, prNumber, labels) {
 function updateTitle(client, prNumber, labels, title) {
     return __awaiter(this, void 0, void 0, function* () {
         let updatedTitle = title;
-        if (labels) {
+        if (labels.length > 0) {
             if (title.endsWith(']')) {
                 updatedTitle = title.slice(0, title.lastIndexOf(' [')) + ' [' + labels.join(' | ') + ']';
             }

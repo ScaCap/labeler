@@ -253,8 +253,8 @@ async function updateTitle(
   labels: string[],
   title: string
 ) {
-  let updatedTitle = title
-  if (labels) {
+  let updatedTitle = title;
+  if (labels.length > 0) {
     if (title.endsWith(']')){
       updatedTitle = title.slice(0, title.lastIndexOf(' [')) + ' [' + labels.join(' | ') + ']'
     } else {
