@@ -242,6 +242,9 @@ function updateTitle(client, prNumber, labels, title) {
                 updatedTitle = title + ' [' + labels.join(' | ') + ']';
             }
         }
+        if (labels.length === 0 && title.endsWith(']')) {
+            updatedTitle = title.slice(0, title.lastIndexOf(' ['));
+        }
         yield client.rest.pulls.update({
             owner: github.context.repo.owner,
             repo: github.context.repo.repo,
