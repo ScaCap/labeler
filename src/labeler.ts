@@ -13,6 +13,7 @@ type ClientType = ReturnType<typeof github.getOctokit>;
 
 export async function run() {
   try {
+    const title = github.context.payload.pull_request?.title;
     const token = core.getInput("repo-token", { required: true });
     const configPath = core.getInput("configuration-path", { required: true });
     const syncLabels = !!core.getInput("sync-labels", { required: false });
@@ -55,6 +56,10 @@ export async function run() {
 
     if (syncLabels && labelsToRemove.length) {
       await removeLabels(client, prNumber, labelsToRemove);
+    }
+
+    if (labels.length > 0 || (syncLabels && labelsToRemove.length)) {
+      await updateTitle(client, prNumber, labels, title);
     }
   } catch (error) {
     core.error(error);
@@ -239,6 +244,23 @@ async function addLabels(
     repo: github.context.repo.repo,
     issue_number: prNumber,
     labels: labels,
+  });
+}
+
+async function updateTitle(
+  client: ClientType,
+  prNumber: number,
+  labels: string[],
+  title: string
+) {
+  const updated = title.endsWith(']') 
+    ? title.slice(0, title.lastIndexOf('[')) + ' [' + labels.join(' | ') + ']'
+    : title + ' [' + labels.join(' | ') + ']';
+  await client.rest.pulls.update({
+    owner: github.context.repo.owner,
+    repo: github.context.repo.repo,
+    pull_number: prNumber,
+    title: updated
   });
 }
 

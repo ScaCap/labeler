@@ -41,8 +41,10 @@ const github = __importStar(__nccwpck_require__(5438));
 const yaml = __importStar(__nccwpck_require__(1917));
 const minimatch_1 = __nccwpck_require__(3973);
 function run() {
+    var _a;
     return __awaiter(this, void 0, void 0, function* () {
         try {
+            const title = (_a = github.context.payload.pull_request) === null || _a === void 0 ? void 0 : _a.title;
             const token = core.getInput("repo-token", { required: true });
             const configPath = core.getInput("configuration-path", { required: true });
             const syncLabels = !!core.getInput("sync-labels", { required: false });
@@ -76,6 +78,9 @@ function run() {
             }
             if (syncLabels && labelsToRemove.length) {
                 yield removeLabels(client, prNumber, labelsToRemove);
+            }
+            if (labels.length > 0 || (syncLabels && labelsToRemove.length)) {
+                yield updateTitle(client, prNumber, labels, title);
             }
         }
         catch (error) {
@@ -223,6 +228,19 @@ function addLabels(client, prNumber, labels) {
             repo: github.context.repo.repo,
             issue_number: prNumber,
             labels: labels,
+        });
+    });
+}
+function updateTitle(client, prNumber, labels, title) {
+    return __awaiter(this, void 0, void 0, function* () {
+        const updated = title.endsWith(']')
+            ? title.slice(0, title.lastIndexOf('[')) + ' [' + labels.join(' | ') + ']'
+            : title + ' [' + labels.join(' | ') + ']';
+        yield client.rest.pulls.update({
+            owner: github.context.repo.owner,
+            repo: github.context.repo.repo,
+            pull_number: prNumber,
+            title: updated
         });
     });
 }
